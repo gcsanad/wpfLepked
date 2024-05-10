@@ -6,21 +6,19 @@
         xmlns:local="clr-namespace:Lepegetes"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Viewbox>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="3*"/>
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="3*"/>
+            </Grid.RowDefinitions>
 
-        <Button Height="20" x:Name="btnLepkedes" Content="Lépés" FontSize="15" VerticalAlignment="Bottom" Click="btnLepkedes_Click"/>
+            <Button Height="25" x:Name="btnLepkedes" Margin="10" Content="Lépés" FontSize="15" VerticalAlignment="Bottom" Click="btnLepkedes_Click"/>
 
-
-        <UniformGrid Grid.Row="1" x:Name="ugTabla" >
-            
-        </UniformGrid>
+            <Border Grid.Row="1"  BorderBrush="Black" Margin="10" BorderThickness="2">
+                <Grid Grid.Row="1" x:Name="gridTabla" Margin="10">
+                </Grid>
+            </Border>
     </Grid>
-    </Viewbox>
-    
-    
+
+
 </Window>
