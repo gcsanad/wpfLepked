@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,8 +25,8 @@ namespace Lepegetes
     {
         const int TABLA_SOROK = 10;
         const int TABLA_OSZLOPOK = 30;
-        const int LEKEK_SZAMA = 10;
-        const int BABUK_SZAMA = 100;
+        const int LEKEK_SZAMA = 20;
+        const int BABUK_SZAMA = 30;
 
         List<Point> lyukakLista = new List<Point>();
         List<Point> babukHelye = new List<Point>();
@@ -53,6 +54,11 @@ namespace Lepegetes
                 }
             }
             return pontok;
+        }
+
+        private void VanELyuk(Point hely, List<Point> lista, Point lepes)
+        {
+            lista.Add(lepes);
         }
 
         private void TablaGeneralas()
@@ -108,33 +114,108 @@ namespace Lepegetes
         }
         private void btnLepkedes_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var babu in gridTabla.Children)
+            for (int babu = 0; babu < gridTabla.Children.Count; babu++)
             {
-                if (babu is Button)
+                if (gridTabla.Children[babu] is Button)
                 {
-                 Point babuHelye = new Point(Grid.GetColumn(babu as Button),Grid.GetRow(babu as Button));
-                 List<Point> szabadTerek = new();
-                    for (int sorok = 0; sorok < TABLA_SOROK; sorok++)
-                    {
-                        for (int oszlopok = 0; oszlopok < TABLA_OSZLOPOK; oszlopok++)
-                        {
-                            Point igen = new Point(oszlopok, sorok);
-                            if (!babukHelye.Contains(igen) && !lyukakLista.Contains(igen))
-                            {
-                             szabadTerek.Add(igen);
+                    //   int randomHely = rand.Next(szabadTerek.Count());
+                    //   babukHelye.Remove(babuHelye);
+                    //   Grid.SetColumn(babu as Button, (int)szabadTerek[randomHely].X);
+                    //   Grid.SetRow(babu as Button, (int)szabadTerek[randomHely].Y);
+                    //   babukHelye.Add(new Point(Grid.GetColumn(babu as Button), Grid.GetRow(babu as Button)));
+                    
+                    Point babuHelye = new Point(Grid.GetColumn(gridTabla.Children[babu] as Button), Grid.GetRow(gridTabla.Children[babu] as Button));
+                    List<Point> szabadTerek = new();
+                    
+                       for (int sorok = 0; sorok < TABLA_SOROK; sorok++)
+                       {
+                           for (int oszlopok = 0; oszlopok < TABLA_OSZLOPOK; oszlopok++)
+                           {
+                               Point igen = new Point(oszlopok, sorok);
+                               if (!babukHelye.Contains(igen) && !lyukakLista.Contains(igen))
+                               {
+                                szabadTerek.Add(igen);
 
-                            }
+                               }
+                           }
+                       }
+                    List<Point> lephetoLista = new();
+                    if (babuHelye.Y+1 < TABLA_SOROK &&(szabadTerek.Contains(new Point(babuHelye.X, babuHelye.Y+1)) || lyukakLista.Contains(new Point(babuHelye.X, babuHelye.Y + 1))))
+                    {
+                        VanELyuk(babuHelye, lephetoLista, new Point(babuHelye.X, babuHelye.Y + 1));
+                    }
+                    if (babuHelye.X + 1 < TABLA_OSZLOPOK && (szabadTerek.Contains(new Point(babuHelye.X + 1, babuHelye.Y)) || lyukakLista.Contains(new Point(babuHelye.X + 1, babuHelye.Y))))
+                    {
+                        VanELyuk(babuHelye, lephetoLista, new Point(babuHelye.X + 1, babuHelye.Y));
+                    }
+                    if (babuHelye.Y - 1 > TABLA_SOROK && (szabadTerek.Contains(new Point(babuHelye.X, babuHelye.Y - 1)) || lyukakLista.Contains(new Point(babuHelye.X, babuHelye.Y - 1))))
+                    {
+                        VanELyuk(babuHelye, lephetoLista, new Point(babuHelye.X, babuHelye.Y - 1));
+                    }
+                    if (babuHelye.X - 1 >= TABLA_OSZLOPOK && (szabadTerek.Contains(new Point(babuHelye.X - 1, babuHelye.Y)) || lyukakLista.Contains(new Point(babuHelye.X - 1, babuHelye.Y))))
+                    {
+                        VanELyuk(babuHelye, lephetoLista, new Point(babuHelye.X - 1, babuHelye.Y));
+                    }
+                    if (lephetoLista.Count() != 0 && gridTabla.Children[babu] is Button)
+                    {
+                        switch (rand.Next(0, lephetoLista.Count()-1))
+                        {
+                            case 0:
+                                if (lyukakLista.Contains(new Point(babuHelye.X, babuHelye.Y + 1)))
+                                {
+                                    gridTabla.Children.Remove(gridTabla.Children[babu] as Button);
+                                }
+                                else
+                                {
+                                    Grid.SetColumn(gridTabla.Children[babu] as Button, (int)babuHelye.X);
+                                    Grid.SetRow(gridTabla.Children[babu] as Button, (int)babuHelye.Y + 1);
+                                }
+                                break;
+                            case 1:
+                                if (lyukakLista.Contains(new Point(babuHelye.X + 1, babuHelye.Y)))
+                                {
+                                    gridTabla.Children.Remove(gridTabla.Children[babu] as Button);
+                                }
+                                else
+                                {
+                                Grid.SetColumn(gridTabla.Children[babu] as Button, (int)babuHelye.X + 1);
+                                Grid.SetRow(gridTabla.Children[babu] as Button, (int)babuHelye.Y);
+
+                                }
+                                break;
+                            case 2:
+                                if (lyukakLista.Contains(new Point(babuHelye.X, babuHelye.Y - 1)))
+                                {
+                                    gridTabla.Children.Remove(gridTabla.Children[babu] as Button);
+                                    
+                                }
+                                else
+                                {
+                                Grid.SetColumn(gridTabla.Children[babu] as Button, (int)babuHelye.X);
+                                Grid.SetRow(gridTabla.Children[babu] as Button, (int)babuHelye.Y - 1);       
+                                }
+                                break;
+                            case 3:
+                                if (lyukakLista.Contains(new Point(babuHelye.X - 1, babuHelye.Y)))
+                                {
+                                    gridTabla.Children.Remove(gridTabla.Children[babu] as Button);
+                                }
+                                else
+                                {
+                                Grid.SetColumn(gridTabla.Children[babu] as Button, (int)babuHelye.X - 1);
+                                Grid.SetRow(gridTabla.Children[babu] as Button, (int)babuHelye.Y);
+
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
-                    int randomHely = rand.Next(szabadTerek.Count());
-                    babukHelye.Remove(babuHelye);
-                    Grid.SetColumn(babu as Button, (int)szabadTerek[randomHely].X);
-                    Grid.SetRow(babu as Button, (int)szabadTerek[randomHely].Y);
-                    babukHelye.Add(new Point(Grid.GetColumn(babu as Button), Grid.GetRow(babu as Button)));
                 }
                 
                 
             }
+
         }
     }
 
